@@ -145,6 +145,10 @@ li{
     padding: 10px;
     margin: 0 20px;
 }
+li:hover{
+    background-color: #f4f4f4;
+    transform: translatey(-3px);
+}
 @keyframes rolar {
     from { transform: translateX(0); }
     to   { transform: translateX(-50%); }
