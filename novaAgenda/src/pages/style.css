@@ -18,6 +18,10 @@ form{
     padding: 20px;
     width: 50%;
     flex-direction: column;
+    flex: 0.5;
+}
+label{
+    font-size: 0.95rem;
 }
 #inp{
     display: flex;
@@ -25,8 +29,9 @@ form{
     justify-content: space-between;
 }
 input:not([type="checkbox"]){
+    font-size: 1rem;
     width: 100%;
-    padding: 10px;
+    padding: 20px 20px;
     margin-bottom: 10px;
     border-radius: 7px;
     border: 1px solid;
@@ -39,16 +44,12 @@ input:not([type="checkbox"]){
     color: #58584e;
 }
 
-#meu-botao{
-    text-align: center;
-    width: 100%;
-    padding: 10px;
-    margin-top: 10px;
-    background-color: #1D9E75;
-}
 button{
     width: 100%;
     padding: 10px;
     border: 1px solid;
-    background-color: rgb(15, 128, 58);
+    background-color: #1D9E75;
+}
+button:hover{
+    background-color: #0F6E56;
 }
