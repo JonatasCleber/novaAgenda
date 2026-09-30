@@ -9,34 +9,36 @@
 <body>
     <main>
         <section>
-            <form action="">
-                <label for="">nome completo</label>
-                <input type="text">
+            <form id="form-agendar">
+                <label for="nome">nome completo</label>
+                <input type="text" id="nome" name="nome">
                 <div id="inp">
                     <div class="edit">
-                        <label for="">cpf</label>
-                        <input type="text">
-                        <label for="" >telefone/whatsapp</label>
-                        <input type="number" >
-                        <label for="">convênio (opcional)</label>
-                        <input type="text">
+                        <label for="cpf">cpf</label>
+                        <input type="text" id="cpf" name="cpf">
+                        <label for="telefone">telefone/whatsapp</label>
+                        <input type="text" id="telefone" name="telefone">
+                        <label for="convenio">convênio (opcional)</label>
+                        <input type="text" id="convenio" name="convenio">
                     </div>
                     <div class="edit">
-                        <label for="">data de nascimento</label>
-                        <input type="date">
-                        <label for="">email</label>
-                        <input type="email">
-                        <label for="">n° da carteirinha</label>
-                        <input type="number">
+                        <label for="data-nascimento">data de nascimento</label>
+                        <input type="date" id="data-nascimento" name="data-nascimento">
+                        <label for="email">email</label>
+                        <input type="email" id="email" name="email">
+                        <label for="carteirinha">n° da carteirinha</label>
+                        <input type="text" id="carteirinha" name="carteirinha">
                     </div>
                 </div>
                  <label class="checkbox-container">
-                    <input type="checkbox" name="permitir" id="check">
+                    <input type="checkbox" name="aceite" id="check" checked>
                     <span>atendimento, necessidades especiais, <br> termos de consentimento ou confirmações obrigatórias.</span>
                  </label>
-                <button>Agendar</button>
+                <button type="submit">Agendar</button>
             </form>
         </section>
     </main>
+    <script src="script.js"></script>
+    <script src="server.js"></script>
 </body>
 </html>
