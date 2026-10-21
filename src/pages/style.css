@@ -36,7 +36,9 @@ input:not([type="checkbox"]){
     border-radius: 7px;
     border: 1px solid;
 }
-
+.edit{
+    margin: 2px;
+}
 .checkbox-container{
     align-items: center;
     cursor: pointer;

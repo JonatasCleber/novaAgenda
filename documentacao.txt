@@ -34,3 +34,279 @@ Aqui ele puxa as atrações que já existem no site:
 ⏱  Tempo estimado: dia inteiro
     Levar: água, protetor, calçado adequado
     Guia: recomendado/necessário, quando aplicável
+
+
+
+
+     
+// =========================================================================
+// BLOCO PRINCIPAL: VERIFICAÇÃO DE EXISTÊNCIA DO FORMULÁRIO
+// =========================================================================
+ 
+// 'const' declara uma constante (uma caixa de memória que não pode ter seu valor trocado depois).
+// 'document' representa toda a estrutura HTML da página web carregada no navegador.
+// '.getElementById("formContato")' é um método que busca no HTML o elemento que possui exatamente o id "formContato" e o guarda na constante.
+const formContato = document.getElementById("formContato");
+ 
+// A estrutura condicional 'if' (se) avalia o que está entre parênteses.
+// Como 'formContato' armazena o elemento HTML (o que é considerado um valor verdadeiro/existente),
+// todo o código de dentro das chaves {} só vai rodar se o formulário realmente existir nesta página.
+// Isso evita que o site quebre ou dê erro no console se abrirmos este script em uma página que não tem esse formulário.
+if (formContato) {
+ 
+    // =====================================================================
+    // SELEÇÃO DE ELEMENTOS INTERATIVOS DA TELA
+    // =====================================================================
+    // Abaixo, criamos constantes para guardar atalhos de todos os campos e botões.
+    // Assim, não precisamos escrever 'document.getElementById(...)' toda vez que formos mexer neles.
+ 
+    const nomeCompleto = document.getElementById("nomeCompleto");     // Guarda o input do nome
+    const dataNascimento = document.getElementById("dataNascimento"); // Guarda o input de data de nascimento
+    const campoCpf = document.getElementById("cpf");                  // Guarda o input de CPF
+    const email = document.getElementById("email");                   // Guarda o input de e-mail
+    const mensagem = document.getElementById("mensagem");             // Guarda a caixa de texto (textarea) da mensagem
+ 
+    const contadorMensagem = document.getElementById("contadorMensagem"); // Guarda a tag <small> que mostra quantos caracteres faltam
+    const statusFormulario = document.getElementById("statusFormulario"); // Guarda o parágrafo que exibe avisos de sucesso ou erro
+    const btnEnviar = document.getElementById("btnEnviar");               // Guarda o botão de envio do formulário
+ 
+ 
+    // =====================================================================
+    // 1. LÓGICA PARA IMPEDIR DATAS FUTURAS E VALIDAR O NASCIMENTO
+    // =====================================================================
+ 
+    // 'new Date()' é um objeto nativo do JavaScript que puxa a data e a hora exatas do relógio do computador/celular do usuário.
+    const hoje = new Date();
+ 
+    // '.getFullYear()' extrai apenas o ano numérico de 4 dígitos da data atual (ex: 2026).
+    const ano = hoje.getFullYear();
+ 
+    // '.getMonth()' extrai o mês atual. ATENÇÃO À LÓGICA DO JAVASCRIPT: os meses começam a contar do zero
+    // (0 é janeiro, 1 é fevereiro... 9 é outubro, etc.). Por isso usamos '+ 1' para corrigir e obter o mês real.
+    // 'String(...)' converte o resultado em texto.
+    // '.padStart(2, "0")' garante que o texto terá sempre 2 caracteres, colocando um zero à esquerda se for menor que 10 (ex: "4" vira "04").
+    const mes = String(hoje.getMonth() + 1).padStart(2, "0");
+ 
+    // '.getDate()' extrai o dia do mês atual (ex: 14). 'padStart' garante que se for de 1 a 9, ganhe um zero na frente (ex: "09").
+    const dia = String(hoje.getDate()).padStart(2, "0");
+ 
+    // Template Literals (usando crases `` e ${}): Juntam as variáveis textuais no formato universal "ANO-MÊS-DIA" (ex: "2026-10-14")
+    // que é o formato estrito exigido por inputs de data no HTML5.
+    const dataAtual = `${ano}-${mes}-${dia}`;
+ 
+    // '.setAttribute("atributo", "valor")' altera ou cria atributos HTML via JavaScript de forma dinâmica.
+    // Aqui definimos que a data de nascimento mínima permitida é 01/01/1900...
+    dataNascimento.setAttribute("min", "1900-01-01");
+    // ...e a data máxima permitida é a data de hoje que acabamos de calcular, travando qualquer tentativa de escolher o futuro.
+    dataNascimento.setAttribute("max", dataAtual);
+ 
+    // 'function' declara uma função, ou seja, um bloco de código reutilizável que guarda uma rotina específica.
+    function validarDataNascimento() {
+        // 'if' avalia se a condição entre parênteses é verdadeira:
+        // 1. 'dataNascimento.value !== ""': Verifica se o campo NÃO está vazio (se o usuário preencheu algo).
+        // 2. '&&' significa E lógico (ambas as condições precisam ser verdadeiras).
+        // 3. Os parênteses internos agrupam a lógica de intervalo: verifica se o valor é menor que "1900-01-01"
+        //    OU ('||' significa OU lógico) se o valor é maior que a 'dataAtual'.
+        if (
+            dataNascimento.value !== "" &&
+            (
+                dataNascimento.value < "1900-01-01" ||
+                dataNascimento.value > dataAtual
+            )
+        ) {
+            // Se a data estiver fora do intervalo permitido, '.setCustomValidity(...)' define uma mensagem de erro personalizada
+            // que a API nativa do navegador vai exibir caso a pessoa tente enviar o formulário.
+            dataNascimento.setCustomValidity(
+                "Escolha uma data entre 01/01/1900 e hoje."
+            );
+        } else {
+            // 'else' (senão): Se a data estiver correta e dentro do prazo, passamos uma string vazia `""` para limpar qualquer erro e liberar o campo.
+            dataNascimento.setCustomValidity("");
+        }
+    }
+ 
+    // '.addEventListener("change", ...)' adiciona um ouvinte de eventos. Ele fica vigiando o campo de data.
+    // Assim que o usuário termina de escolher ou alterar a data no calendário ("change"), a nossa função de validação é acionada instantaneamente.
+    dataNascimento.addEventListener("change", validarDataNascimento);
+ 
+ 
+    // =====================================================================
+    // 2. LÓGICA DE VALIDAÇÃO DO NOME COMPLETO
+    // =====================================================================
+ 
+    function validarNome() {
+ 
+        // '.value' pega o que foi digitado.
+        // '.trim()' é um método de texto essencial que remove todos os espaços em branco que o usuário possa ter digitado
+        // por engano no comecinho ou no final do texto (ex: "  Maria Silva  " vira "Maria Silva").
+        const nome = nomeCompleto.value.trim();
+ 
+        // A lógica abaixo divide o nome digitado em pedaços (palavras) para contar quantas palavras existem:
+        // 1. '.split(/\s+/)': Usa uma Expressão Regular (Regex) 's+' que acha qualquer espaço em branco e quebra o texto num array de pedaços
+        //    (ex: "Ana Paula" vira ['Ana', 'Paula']).
+        // 2. '.filter(Boolean)': Varre esse array e joga fora qualquer pedaço vazio ou nulo que tenha sobrado, deixando apenas palavras limpas.
+        const partesNome = nome
+            .split(/\s+/)
+            .filter(Boolean);
+ 
+        // Se o campo estiver totalmente vazio ('nome === ""'), limpamos o erro personalizado e usamos 'return' para parar a execução da função ali.
+        // Deixamos a regra nativa do HTML ('required') cuidar de avisar que o campo é obrigatório se o form for enviado vazio.
+        if (nome === "") {
+            nomeCompleto.setCustomValidity("");
+            return;
+        }
+ 
+        // 'if' valida a regra de negócio: se o tamanho total do texto for menor que 5 caracteres ('nome.length < 5')
+        // OU ('||') se a quantidade de palavras separadas for menor que 2 ('partesNome.length < 2'), exigindo que a pessoa digite nome e sobrenome.
+        if (nome.length < 5 || partesNome.length < 2) {
+            // Se violar a regra, exibe a mensagem de erro customizada.
+            nomeCompleto.setCustomValidity(
+                "Digite seu nome completo, incluindo nome e sobrenome."
+            );
+        } else {
+            // Caso contrário, limpa o erro.
+            nomeCompleto.setCustomValidity("");
+        }
+    }
+ 
+    // '.addEventListener("input", ...)' fica escutando o evento "input", que é disparado a cada tecla (letra) que o usuário digita.
+    // Isso valida o nome em tempo real enquanto a pessoa escreve.
+    nomeCompleto.addEventListener("input", validarNome);
+ 
+ 
+    // =====================================================================
+    // 3. LÓGICA DE FORMATAÇÃO E MÁSCARA DO CPF
+    // =====================================================================
+ 
+    // Recebe o texto cru digitado no campo de CPF como parâmetro ('valor').
+    function formatarCPF(valor) {
+ 
+        // 1. 'valor.replace(/\D/g, "")': Usa Regex para procurar tudo o que NÃO seja dígito numérico ('\D' significa não-dígito, 'g' significa global)
+        //    e substitui por vazio, isolando APENAS OS NÚMEROS.
+        // 2. '.slice(0, 11)': Corta a string de números para garantir que, mesmo se alguém colar um texto gigantesco,
+        //    apenas os primeiros 11 dígitos serão aproveitados.
+        const numeros = valor.replace(/\D/g, "").slice(0, 11);
+ 
+        // Se houver 3 números ou menos, não há o que formatar, retorna os números puros (ex: "123").
+        if (numeros.length <= 3) {
+            return numeros;
+        }
+ 
+        // Se houver de 4 a 6 números:
+        // A Regex '/^(\d{3})(\d+)/' pega os 3 primeiros dígitos ('\d{3}') e guarda no grupo 1 ('$1'),
+        // e pega o restante dos números ('\d+') guardando no grupo 2 ('$2').
+        // O segundo argumento ('"$1.$2"') insere um ponto entre os grupos (ex: "123.45").
+        if (numeros.length <= 6) {
+            return numeros.replace(
+                /^(\d{3})(\d+)/,
+                "$1.$2"
+            );
+        }
+ 
+        // Se houver de 7 a 9 números:
+        // Pega o primeiro bloco de 3 ('$1'), o segundo bloco de 3 ('$2') e o restante ('$3'), inserindo pontos entre eles (ex: "123.456.789").
+        if (numeros.length <= 9) {
+            return numeros.replace(
+                /^(\d{3})(\d{3})(\d+)/,
+                "$1.$2.$3"
+            );
+        }
+ 
+        // Se passar de 9 números (chegando até 11):
+        // Aplica a máscara completa do CPF: 3 dígitos ('$1'), ponto, 3 dígitos ('$2'), ponto, 3 dígitos ('$3'),
+        // e um traço '-' seguido dos últimos 1 ou 2 dígitos finais ('$4') (ex: "123.456.789-01").
+        return numeros.replace(
+            /^(\d{3})(\d{3})(\d{3})(\d{1,2})$/,
+            "$1.$2.$3-$4"
+        );
+    }
+ 
+ 
+    // =====================================================================
+    // 4. LÓGICA DE VALIDAÇÃO MATEMÁTICA DOS DÍGITOS DO CPF
+    // =====================================================================
+ 
+    function cpfValido(valor) {
+ 
+        // Limpa formatação prévia e deixa apenas os números puros.
+        const cpf = valor.replace(/\D/g, "");
+ 
+        // Se o tamanho dos números for diferente de 11, o CPF é matematicamente inválido. Retorna 'false'.
+        if (cpf.length !== 11) {
+            return false;
+        }
+ 
+        // Expressão Regular de segurança avançada: '/^(\d)\1{10}$/.test(cpf)'
+        // Verifica se o primeiro dígito numérico se repete idêntico 10 vezes seguidas (ex: "000.000.000-00", "111.111.111-11").
+        // CPFs assim passam na máscara, mas são falsos na vida real. Se a regra bater, retorna 'false'.
+        if (/^(\d)\1{10}$/.test(cpf)) {
+            return false;
+        }
+ 
+        let soma = 0;
+ 
+        // -----------------------------------------------------------------
+        // CÁLCULO OFICIAL DO 1º DÍGITO VERIFICADOR DO CPF (9º número):
+        // O algoritmo da Receita Federal multiplica os primeiros 9 números do CPF
+        // por pesos decrescentes que começam em 10 e vão descendo até 2.
+        // -----------------------------------------------------------------
+        for (let i = 0; i < 9; i++) {
+            // 'Number(cpf[i])' converte o caractere da posição 'i' em número inteiro.
+            // Multiplica por '(10 - i)' e acumula o valor somando na variável 'soma'.
+            soma += Number(cpf[i]) * (10 - i);
+        }
+ 
+        // Multiplica a soma total por 10 e calcula o resto da divisão por 11 usando o operador '%' (módulo).
+        let resto = (soma * 10) % 11;
+ 
+        // Se o resto der 10 ou 11, por regra do algoritmo oficial do CPF, ele deve ser ajustado para 0.
+        if (resto === 10) {
+            resto = 0;
+        }
+ 
+        // Compara o 'resto' calculado com o 9º dígito real digitado no CPF ('Number(cpf[9])').
+        // Se forem diferentes, o CPF é falso e a função encerra retornando 'false'.
+        if (resto !== Number(cpf[9])) {
+            return false;
+        }
+ 
+        soma = 0;
+ 
+        // -----------------------------------------------------------------
+        // CÁLCULO OFICIAL DO 2º DÍGITO VERIFICADOR DO CPF (10º número):
+        // Usa os primeiros 10 números do CPF e pesos decrescentes que começam em 11 e vão até 2.
+        // -----------------------------------------------------------------
+        for (let i = 0; i < 10; i++) {
+            soma += Number(cpf[i]) * (11 - i);
+        }
+ 
+        resto = (soma * 10) % 11;
+ 
+        if (resto === 10) {
+            resto = 0;
+        }
+ 
+        // Compara o resto calculado com o 10º dígito real ('Number(cpf[10])').
+        // Se o resultado da comparação for verdadeiro ('==='), a função retorna 'true' (CPF válido). Se for falso, retorna 'false'.
+        return resto === Number(cpf[10]);
+    }
+ 
+    // Adiciona um ouvinte "input" no campo de CPF para formatar e validar em tempo real enquanto o usuário digita.
+    campoCpf.addEventListener("input", function () {
+ 
+        // Aplica a função de máscara no valor atual do campo e devolve formatado.
+        campoCpf.value = formatarCPF(campoCpf.value);
+ 
+        // Se o campo estiver vazio, limpa o erro. Se o CPF preenchido falhar na função de validação matemática ('!cpfValido'),
+        // exibe aviso de erro personalizado. Caso contrário, limpa o erro.
+        if (campoCpf.value === "") {
+            campoCpf.setCustomValidity("");
+        } else if (!cpfValido(campoCpf.value)) {
+            campoCpf.setCustomValidity(
+                "Digite um CPF válido e confira os números."
+            );
+        } else {
+            campoCpf.setCustomValidity("");
+        }
+    });
+ 
