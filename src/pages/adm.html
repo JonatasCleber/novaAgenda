@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Parte Adiministrativa</title>
+    <style>
+        * {
+            padding: 0;
+            margin: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background-color: antiquewhite;
+        }
+
+        main {
+            background-color: beige;
+            display: flex;
+            height: 100vh;
+            align-items: center;
+            justify-content: center;
+        }
+
+        section {
+            background-color: rgba(0, 0, 255, 0.384);
+            padding: 10px;
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+        }
+
+        #lista {
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            padding: 20px;
+            margin: 10px;
+        }
+
+        .card{
+            border: solid 1px;
+            padding: 20px;
+            margin: 10px;
+        }
+    </style>
+</head>
+
+<body>
+    <header>
+        <h2>Gerenciar Agenda</h2>
+    </header>
+    <main>
+        <section>
+            <div id="lista"></div>
+        </section>
+    </main>
+    <script>
+        async function carregar() {
+            const resposta = await fetch('http://localhost:3000/agendamentos')
+            const lista = await resposta.json()
+            lista.forEach((item) => {
+                const card = document.createElement('div')
+                card.className = 'card'
+
+                const nome = document.createElement('p')
+                nome.textContent = `Nome: ${item.nome}`
+                card.appendChild(nome)
+
+                const cpf = document.createElement('p')
+                cpf.textContent = `CPF: ${item.cpf}`
+                card.appendChild(cpf)
+
+                const telefone = document.createElement('p')
+                telefone.textContent = `Telefone: ${item.telefone}`
+                card.appendChild(telefone)
+
+                const email = document.createElement('p')
+                email.textContent = `Email: ${item.email}`
+                card.appendChild(email)
+
+                document.getElementById('lista').appendChild(card)
+
+                
+            })
+        }
+        carregar()
+
+    </script>
+</body>
+
+</html>
